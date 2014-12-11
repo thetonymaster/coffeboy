@@ -15,7 +15,7 @@ type Product struct {
 	Name       string  `json:"name"`
 	Price      float64 `json:"price" db:"price"`
 	ImageURL   string  `json:"image-url"`
-	Stock      int     `json:"price" db:"price"`
+	Stock      int     `json:"stock" db:"stock"`
 }
 
 func (product *Product) Save(dbmap *gorp.DbMap) error {
