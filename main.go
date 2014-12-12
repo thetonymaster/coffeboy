@@ -9,6 +9,8 @@ import (
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/controllers/categoriescontroller"
 	"github.com/crowdint/coffeboy/controllers/productscontroller"
+	"github.com/crowdint/coffeboy/controllers/rolescontroller"
+	"github.com/crowdint/coffeboy/controllers/userscontroller"
 	"github.com/crowdint/coffeboy/models/categories"
 	"github.com/crowdint/coffeboy/models/products"
 	"github.com/gorilla/mux"
@@ -54,6 +56,16 @@ func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Get)).Methods("GET")
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Update)).Methods("PUT")
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Delete)).Methods("DELETE")
+
+	r.HandleFunc("/role", f(rolescontroller.Save)).Methods("POST")
+	r.HandleFunc("/role/{id}", f(rolescontroller.Get)).Methods("GET")
+	r.HandleFunc("/role/{id}", f(rolescontroller.Update)).Methods("PUT")
+	r.HandleFunc("/role/{id}", f(rolescontroller.Delete)).Methods("DELETE")
+
+	r.HandleFunc("/role", f(userscontroller.Save)).Methods("POST")
+	r.HandleFunc("/role/{id}", f(userscontroller.Get)).Methods("GET")
+	r.HandleFunc("/role/{id}", f(userscontroller.Update)).Methods("PUT")
+	r.HandleFunc("/role/{id}", f(userscontroller.Delete)).Methods("DELETE")
 
 	return r
 }
