@@ -23,6 +23,10 @@
 			"Rev": "7175accbed18058468c07811f76440d6e8d7cf19"
 		},
 		{
+			"ImportPath": "github.com/nfnt/resize",
+			"Rev": "8f4493144849aa7855fc525f5953c439180e6f25"
+		},
+		{
 			"ImportPath": "github.com/onsi/ginkgo",
 			"Comment": "v1.1.0-28-g7d3d52b",
 			"Rev": "7d3d52b3a3a79d745c2a03ee81b5bc2086642201"
