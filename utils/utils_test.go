@@ -30,8 +30,7 @@ var _ = Describe("Utils", func() {
 			}
 
 			It("Should manage all the tasks", func() {
-				err := UploadAndResizeImage(100, 100, fileBytes, "test.jpg")
-				Expect(err).To(BeNil())
+				UploadAndResizeImage(100, 100, fileBytes, "test.jpg")
 
 				bucketFile, err := bucket.Get("test.jpg")
 				Expect(err).To(BeNil())

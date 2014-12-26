@@ -1,17 +1,27 @@
 package utils
 
-import "github.com/crowdint/coffeboy/imageutil"
+import (
+	"log"
 
-func UploadAndResizeImage(maxWidth, maxHeight uint, fileBytes []byte, path string) error {
-	fileResized, err := imageutil.Resize(fileBytes, 100, 100)
+	"github.com/crowdint/coffeboy/imageutil"
+)
+
+func UploadAndResizeImage(maxWidth, maxHeight uint, fileBytes []byte, path string) {
+	fileResized, err := imageutil.Resize(fileBytes, maxWidth, maxHeight)
 	if err != nil {
-		return err
+		log.Printf("Error %s\n", err.Error())
+		return
 	}
 
 	err = imageutil.Upload(fileResized, path)
 	if err != nil {
-		return err
+		log.Printf("Error %s\n", err.Error())
+		return
 	}
 
-	return nil
+}
+
+func UploadImages(fileBytes []byte, identifier, folder string) {
+	go imageutil.Upload(fileBytes, folder+"/"+identifier+".jpg")
+	go UploadAndResizeImage(400, 300, fileBytes, folder+"/"+identifier+"_small.jpg")
 }

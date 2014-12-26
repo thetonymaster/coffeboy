@@ -10,13 +10,14 @@ import (
 )
 
 type Product struct {
-	ID         int64   `db:"id" json:"id,omitempty"`
-	CategoryID int64   `json:"category-id" db:"category_id"`
-	Name       string  `json:"name"`
-	Price      float64 `json:"price" db:"price"`
-	ImageURL   string  `json:"image-url"`
-	Stock      int     `json:"stock" db:"stock"`
-	Image      []byte  `json:"image,omitempty" db:"-"`
+	ID         int64             `db:"id" json:"id,omitempty"`
+	CategoryID int64             `json:"category-id" db:"category_id"`
+	Name       string            `json:"name"`
+	Price      float64           `json:"price" db:"price"`
+	ImageURL   string            `json:"image-url" db:"image_url"`
+	Stock      int               `json:"stock" db:"stock"`
+	Image      []byte            `json:"image,omitempty" db:"-"`
+	Images     map[string]string `json:"images,omitempty" db:"-"`
 }
 
 func (product *Product) Save(dbmap *gorp.DbMap) error {
