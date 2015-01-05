@@ -53,6 +53,7 @@ func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r.HandleFunc("/product/{id}", f(productscontroller.Delete)).Methods("DELETE")
 
 	r.HandleFunc("/category", f(categoriescontroller.Save)).Methods("POST")
+	r.HandleFunc("/category", f(categoriescontroller.GetAll)).Methods("POST")
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Get)).Methods("GET")
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Update)).Methods("PUT")
 	r.HandleFunc("/category/{id}", f(categoriescontroller.Delete)).Methods("DELETE")

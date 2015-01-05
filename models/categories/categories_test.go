@@ -88,12 +88,12 @@ var _ = Describe("Categories", func() {
 				}
 				category3.Save(dbmap)
 
-				tokens, err := GetAll(dbmap)
+				cats, err := GetAll(dbmap)
 
 				Expect(err).To(BeNil())
-				Expect(tokens).Should(ContainElement(category))
-				Expect(tokens).Should(ContainElement(category2))
-				Expect(tokens).Should(ContainElement(category3))
+				Ω(cats).Should(ContainElement(category))
+				Ω(cats).Should(ContainElement(category2))
+				Ω(cats).Should(ContainElement(category3))
 
 			})
 		})

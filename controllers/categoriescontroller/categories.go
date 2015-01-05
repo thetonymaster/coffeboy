@@ -83,6 +83,26 @@ func Get(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 }
 
+func GetAll(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
+	cats, err := categories.GetAll(dbmap)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(cats)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
 func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()

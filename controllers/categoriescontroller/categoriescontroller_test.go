@@ -72,6 +72,51 @@ var _ = Describe("Categoriescontroller", func() {
 		})
 	})
 
+	Describe("Get all categories from the database", func() {
+		Context("Send a GET request", func() {
+			It("Should return saved categories", func() {
+				record := httptest.NewRecorder()
+				message := `{"name":"breakfast"}`
+				req, err := http.NewRequest("POST", "/category", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record, req)
+
+				Expect(err).To(BeNil())
+				Expect(record.Code).To(Equal(http.StatusCreated))
+
+				record2 := httptest.NewRecorder()
+				message = `{"name":"dinner"}`
+				req2, err := http.NewRequest("POST", "/category", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record2, req2)
+
+				Expect(err).To(BeNil())
+				Expect(record2.Code).To(Equal(http.StatusCreated))
+
+				record3 := httptest.NewRecorder()
+				message = `{"name":"drink"}`
+				req3, err := http.NewRequest("POST", "/category", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record3, req3)
+
+				Expect(err).To(BeNil())
+				Expect(record3.Code).To(Equal(http.StatusCreated))
+
+				record4 := httptest.NewRecorder()
+				req4, err := http.NewRequest("GET", "/category", nil)
+				r.ServeHTTP(record4, req4)
+
+				Expect(err).To(BeNil())
+				Expect(record4.Code).To(Equal(http.StatusOK))
+
+				var categories []categories.Category
+
+				err = json.Unmarshal(record4.Body.Bytes(), &categories)
+				Expect(err).To(BeNil())
+
+				Expect(len(categories)).Should(Equal(3))
+
+			})
+		})
+	})
+
 	Describe("Update a category from the database", func() {
 		Context("Send a PUT request", func() {
 			It("Should return a category JSON object", func() {
@@ -170,6 +215,7 @@ func CreateDbMapHandlerToHTTPHandler(dbmap *gorp.DbMap) DbMapHandlerToHTTPHandle
 func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/category", f(Save)).Methods("POST")
+	r.HandleFunc("/category", f(GetAll)).Methods("GET")
 	r.HandleFunc("/category/{id}", f(Get)).Methods("GET")
 	r.HandleFunc("/category/{id}", f(Update)).Methods("PUT")
 	r.HandleFunc("/category/{id}", f(Delete)).Methods("DELETE")
