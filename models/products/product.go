@@ -25,6 +25,16 @@ func (product *Product) Save(dbmap *gorp.DbMap) error {
 
 }
 
+func GetByCategoryID(id int64, dbmap *gorp.DbMap) ([]Product, error) {
+	var products []Product
+	_, err := dbmap.Select(&products, "select * from products where category_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
+
+}
+
 func Get(id int64, dbmap *gorp.DbMap) (*Product, error) {
 	var product Product
 	err := dbmap.SelectOne(&product, "select * from products where id=$1", id)

@@ -5,13 +5,15 @@ import (
 	"os"
 
 	"github.com/coopernurse/gorp"
+	"github.com/crowdint/coffeboy/models/products"
 	//For science
 	_ "github.com/lib/pq"
 )
 
 type Category struct {
-	ID   int64  `db:"id" json:"id"`
-	Name string `db:"name" json:"name"`
+	ID       int64              `db:"id" json:"id"`
+	Name     string             `db:"name" json:"name"`
+	Products []products.Product `db:"-" json:"products,omitempty"`
 }
 
 func (category *Category) Save(dbmap *gorp.DbMap) error {

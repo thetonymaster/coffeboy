@@ -20,7 +20,8 @@ var _ = Describe("Products", func() {
 
 	BeforeEach(func() {
 		product = Product{
-			Name: "1234",
+			CategoryID: 1,
+			Name:       "1234",
 		}
 	})
 
@@ -53,6 +54,20 @@ var _ = Describe("Products", func() {
 
 				Expect(err).To(BeNil())
 				Expect(product2).To(Equal(&product))
+			})
+		})
+	})
+
+	Describe("Get a register from a category from the database", func() {
+		Context("To the test database", func() {
+			It("Should not return an error", func() {
+				err := product.Save(dbmap)
+				Expect(err).To(BeNil())
+
+				product2, err := GetByCategoryID(product.CategoryID, dbmap)
+
+				Expect(err).To(BeNil())
+				Expect(product2).To(Equal([]Product{product}))
 			})
 		})
 	})

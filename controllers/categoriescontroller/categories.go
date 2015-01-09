@@ -12,6 +12,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type Response struct {
+	Categories []categories.Category `json:"categories"`
+}
+
 func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
