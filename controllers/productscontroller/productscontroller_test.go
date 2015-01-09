@@ -72,6 +72,10 @@ var _ = Describe("Productscontroller", func() {
 		})
 	})
 
+	Describe("Upload a product with an image", func() {
+
+	})
+
 	Describe("Update a product from the database", func() {
 		Context("Send a PUT request", func() {
 			It("Should return a product JSON object", func() {

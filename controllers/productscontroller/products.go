@@ -9,7 +9,6 @@ import (
 
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/models/products"
-	"github.com/crowdint/coffeboy/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -41,21 +40,14 @@ func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if product.Image != nil {
-		identifier := strconv.FormatInt(product.ID, 10)
-		go utils.UploadImages(product.Image, identifier, "products")
-		product.Image = nil
-		product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
+	// if product.Image != nil {
+	// 	identifier := strconv.FormatInt(product.ID, 10)
+	// 	go utils.UploadImages(product.Image, identifier, "products")
+	// 	product.Image = nil
+	// 	product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
+	// }
 
-		images := map[string]string{
-			"small":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_small.jpg",
-			"medium":   "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_medium.jpg",
-			"large":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_large.jpg",
-			"original": "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg",
-		}
-		product.Images = images
-
-	}
+	product.ImageURL = "http://placekitten.com/g/320/240"
 
 	body, err = json.Marshal(product)
 	if err != nil {
@@ -86,17 +78,6 @@ func Get(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("ERROR: %s\n", err.Error())
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	if product.ImageURL != "" {
-		identifier := strconv.FormatInt(product.ID, 10)
-		images := map[string]string{
-			"small":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_small.jpg",
-			"medium":   "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_medium.jpg",
-			"large":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_large.jpg",
-			"original": "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg",
-		}
-		product.Images = images
 	}
 
 	body, err := json.Marshal(product)
@@ -136,25 +117,16 @@ func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if product.Image != nil {
+	// if product.Image != nil {
+	//
+	// 	identifier := strconv.FormatInt(product.ID, 10)
+	// 	go utils.UploadImages(product.Image, identifier, "products")
+	// 	product.Image = nil
+	// 	product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
+	//
+	// }
 
-		identifier := strconv.FormatInt(product.ID, 10)
-		go utils.UploadImages(product.Image, identifier, "products")
-		product.Image = nil
-		product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
-
-	}
-
-	if product.ImageURL != "" {
-		identifier := strconv.FormatInt(product.ID, 10)
-		images := map[string]string{
-			"small":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_small.jpg",
-			"medium":   "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_medium.jpg",
-			"large":    "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + "_large.jpg",
-			"original": "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg",
-		}
-		product.Images = images
-	}
+	product.ImageURL = "http://placekitten.com/g/320/240"
 
 	w.WriteHeader(http.StatusOK)
 }
