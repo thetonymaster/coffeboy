@@ -148,6 +148,51 @@ var _ = Describe("Productscontroller", func() {
 		})
 	})
 
+	Describe("Get all products from the database", func() {
+		Context("Send a GET request", func() {
+			It("Should return saved products", func() {
+				record := httptest.NewRecorder()
+				message := `{"name":"breakfast"}`
+				req, err := http.NewRequest("POST", "/product", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record, req)
+
+				Expect(err).To(BeNil())
+				Expect(record.Code).To(Equal(http.StatusCreated))
+
+				record2 := httptest.NewRecorder()
+				message = `{"name":"dinner"}`
+				req2, err := http.NewRequest("POST", "/product", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record2, req2)
+
+				Expect(err).To(BeNil())
+				Expect(record2.Code).To(Equal(http.StatusCreated))
+
+				record3 := httptest.NewRecorder()
+				message = `{"name":"drink"}`
+				req3, err := http.NewRequest("POST", "/product", bytes.NewReader([]byte(message)))
+				r.ServeHTTP(record3, req3)
+
+				Expect(err).To(BeNil())
+				Expect(record3.Code).To(Equal(http.StatusCreated))
+
+				record4 := httptest.NewRecorder()
+				req4, err := http.NewRequest("GET", "/product", nil)
+				r.ServeHTTP(record4, req4)
+
+				Expect(err).To(BeNil())
+				Expect(record4.Code).To(Equal(http.StatusOK))
+
+				var products []products.Product
+
+				err = json.Unmarshal(record4.Body.Bytes(), &products)
+				Expect(err).To(BeNil())
+
+				Expect(len(products)).Should(Equal(3))
+
+			})
+		})
+	})
+
 	AfterEach(func() {
 		dbmap.TruncateTables()
 	})
@@ -174,6 +219,7 @@ func CreateDbMapHandlerToHTTPHandler(dbmap *gorp.DbMap) DbMapHandlerToHTTPHandle
 func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/product", f(Save)).Methods("POST")
+	r.HandleFunc("/product", f(GetAll)).Methods("GET")
 	r.HandleFunc("/product/{id}", f(Get)).Methods("GET")
 	r.HandleFunc("/product/{id}", f(Update)).Methods("PUT")
 	r.HandleFunc("/product/{id}", f(Delete)).Methods("DELETE")

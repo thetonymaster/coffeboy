@@ -131,6 +131,27 @@ func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func GetAll(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
+	cats, err := products.GetAll(dbmap)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(cats)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
 func Delete(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 

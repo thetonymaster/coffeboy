@@ -48,6 +48,7 @@ func CreateDbMapHandlerToHTTPHandler(dbmap *gorp.DbMap) DbMapHandlerToHTTPHandle
 func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/product", f(productscontroller.Save)).Methods("POST")
+	r.HandleFunc("/product", f(productscontroller.GetAll)).Methods("GET")
 	r.HandleFunc("/product/{id}", f(productscontroller.Get)).Methods("GET")
 	r.HandleFunc("/product/{id}", f(productscontroller.Update)).Methods("PUT")
 	r.HandleFunc("/product/{id}", f(productscontroller.Delete)).Methods("DELETE")
