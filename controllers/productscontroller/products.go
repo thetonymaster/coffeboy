@@ -32,6 +32,8 @@ func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	product.ImageURL = "http://placekitten.com/g/320/240"
+
 	err = product.Save(dbmap)
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())
@@ -46,8 +48,6 @@ func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	// 	product.Image = nil
 	// 	product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
 	// }
-
-	product.ImageURL = "http://placekitten.com/g/320/240"
 
 	body, err = json.Marshal(product)
 	if err != nil {
@@ -110,6 +110,8 @@ func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	product.ImageURL = "http://placekitten.com/g/320/240"
+
 	err = product.Update(dbmap)
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())
@@ -125,8 +127,6 @@ func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	// 	product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
 	//
 	// }
-
-	product.ImageURL = "http://placekitten.com/g/320/240"
 
 	w.WriteHeader(http.StatusOK)
 }
