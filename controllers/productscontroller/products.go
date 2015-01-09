@@ -1,6 +1,7 @@
 package productscontroller
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,8 +10,13 @@ import (
 
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/models/products"
+	"github.com/crowdint/coffeboy/utils"
 	"github.com/gorilla/mux"
 )
+
+type Response struct {
+	Products []products.Product `json:"products"`
+}
 
 func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -32,7 +38,19 @@ func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	product.ImageURL = "http://placekitten.com/g/320/240"
+	if product.Image != "" {
+		identifier := strconv.FormatInt(product.ID, 10)
+
+		decImg, err := base64.StdEncoding.DecodeString(product.Image)
+		if err != nil {
+			fmt.Printf("DECODE ERROR: %s\n", err.Error())
+			return
+		}
+
+		go utils.UploadImages(decImg, identifier, "products")
+		product.Image = ""
+		product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
+	}
 
 	err = product.Save(dbmap)
 	if err != nil {
@@ -41,13 +59,6 @@ func Save(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-
-	// if product.Image != nil {
-	// 	identifier := strconv.FormatInt(product.ID, 10)
-	// 	go utils.UploadImages(product.Image, identifier, "products")
-	// 	product.Image = nil
-	// 	product.ImageURL = "https://s3-us-west-2.amazonaws.com/coffeboy/products/" + identifier + ".jpg"
-	// }
 
 	body, err = json.Marshal(product)
 	if err != nil {
@@ -105,12 +116,9 @@ func Update(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 
 	var product products.Product
 	err = json.Unmarshal(body, &product)
-
 	if err != nil {
 		panic(err)
 	}
-
-	product.ImageURL = "http://placekitten.com/g/320/240"
 
 	err = product.Update(dbmap)
 	if err != nil {

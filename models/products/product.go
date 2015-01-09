@@ -16,7 +16,7 @@ type Product struct {
 	Price      float64           `json:"price" db:"price"`
 	ImageURL   string            `json:"image-url" db:"image_url"`
 	Stock      int               `json:"stock" db:"stock"`
-	Image      []byte            `json:"image,omitempty" db:"-"`
+	Image      string            `json:"image,omitempty" db:"-"`
 	Images     map[string]string `json:"images,omitempty" db:"-"`
 }
 

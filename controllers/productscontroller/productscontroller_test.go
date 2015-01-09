@@ -2,8 +2,10 @@ package productscontroller_test
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 
@@ -73,14 +75,48 @@ var _ = Describe("Productscontroller", func() {
 	})
 
 	Describe("Upload a product with an image", func() {
+		Context("Image encoded in base64", func() {
+			fileBytes, err := ioutil.ReadFile("../../testfiles/test.jpg")
+			if err != nil {
+				panic(err)
+			}
 
+			sDec := base64.StdEncoding.EncodeToString(fileBytes)
+
+			It("Should return an url with the image", func() {
+				record := httptest.NewRecorder()
+
+				message := products.Product{
+					CategoryID: 1,
+					Name:       "breakfast",
+					Price:      1.00,
+					Image:      sDec,
+					Stock:      9999,
+				}
+
+				messageBytes, err := json.Marshal(message)
+				buffer := bytes.NewBuffer(messageBytes)
+				req, err := http.NewRequest("POST", "/product", buffer)
+				r.ServeHTTP(record, req)
+
+				Expect(err).To(BeNil())
+				Expect(record.Code).To(Equal(http.StatusCreated))
+
+				product := products.Product{}
+
+				err = json.Unmarshal(record.Body.Bytes(), &product)
+				Expect(err).To(BeNil())
+
+				Expect(product.ImageURL).NotTo(BeEmpty())
+			})
+		})
 	})
 
 	Describe("Update a product from the database", func() {
 		Context("Send a PUT request", func() {
 			It("Should return a product JSON object", func() {
 				record := httptest.NewRecorder()
-				message := `{"category-id": 1, "name":"breakfast", "price": 1.00, "image-url": "http://foo/200x300", "stock":9999}`
+				message := `{"category-id": 1, "name":"breakfast", "price": 1.00, "stock":9999}`
 				req, err := http.NewRequest("POST", "/product", bytes.NewReader([]byte(message)))
 				r.ServeHTTP(record, req)
 
