@@ -104,12 +104,22 @@ var _ = Describe("Categories", func() {
 				}
 				category3.Save(dbmap)
 
+				product := products.Product{
+					CategoryID: category.ID,
+					Name:       "ABD",
+				}
+
+				product.Save(dbmap)
+
+				category.Products = []products.Product{product}
 				cats, err := GetAll(dbmap)
 
 				Expect(err).To(BeNil())
 				Ω(cats).Should(ContainElement(*category))
 				Ω(cats).Should(ContainElement(category2))
 				Ω(cats).Should(ContainElement(category3))
+
+				Ω(category.Products).Should(ContainElement(product))
 
 			})
 		})

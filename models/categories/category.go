@@ -55,14 +55,16 @@ func GetAll(dbmap *gorp.DbMap) ([]Category, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, catego := range categories {
+	for nm, catego := range categories {
 		pdts, err := products.GetByCategoryID(catego.ID, dbmap)
 		if err != nil {
 			if err.Error() != "sql: no rows in result set" {
 				return nil, err
 			}
 		}
-		catego.Products = pdts
+		if len(pdts) > 0 {
+			categories[nm].Products = pdts
+		}
 	}
 	return categories, nil
 }
