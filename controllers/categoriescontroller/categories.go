@@ -96,7 +96,11 @@ func GetAll(dbmap *gorp.DbMap, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := json.Marshal(cats)
+	resp := Response{
+		Categories: cats,
+	}
+
+	response, err := json.Marshal(resp)
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

@@ -10,6 +10,7 @@ import (
 	"github.com/coopernurse/gorp"
 	. "github.com/crowdint/coffeboy/controllers/categoriescontroller"
 	"github.com/crowdint/coffeboy/models/categories"
+	"github.com/crowdint/coffeboy/models/products"
 	"github.com/gorilla/mux"
 
 	. "github.com/onsi/ginkgo"
@@ -106,12 +107,12 @@ var _ = Describe("Categoriescontroller", func() {
 				Expect(err).To(BeNil())
 				Expect(record4.Code).To(Equal(http.StatusOK))
 
-				var categories []categories.Category
+				var resp Response
 
-				err = json.Unmarshal(record4.Body.Bytes(), &categories)
+				err = json.Unmarshal(record4.Body.Bytes(), &resp)
 				Expect(err).To(BeNil())
 
-				Expect(len(categories)).Should(Equal(3))
+				Expect(len(resp.Categories)).Should(Equal(3))
 
 			})
 		})
@@ -151,6 +152,7 @@ var _ = Describe("Categoriescontroller", func() {
 				var category2 categories.Category
 				err = json.Unmarshal(record3.Body.Bytes(), &category2)
 
+				category.Products = []products.Product{}
 				Expect(category).To(Equal(category2))
 
 			})

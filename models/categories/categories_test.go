@@ -3,6 +3,7 @@ package categories_test
 import (
 	"github.com/coopernurse/gorp"
 	. "github.com/crowdint/coffeboy/models/categories"
+	"github.com/crowdint/coffeboy/models/products"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,7 +12,7 @@ import (
 var _ = Describe("Categories", func() {
 	var (
 		dbmap    *gorp.DbMap
-		category Category
+		category *Category
 	)
 
 	BeforeSuite(func() {
@@ -19,7 +20,7 @@ var _ = Describe("Categories", func() {
 	})
 
 	BeforeEach(func() {
-		category = Category{
+		category = &Category{
 			Name: "1234",
 		}
 	})
@@ -37,8 +38,10 @@ var _ = Describe("Categories", func() {
 	Describe("Insert a register from the database", func() {
 		Context("To the test database", func() {
 			It("Should not return an error", func() {
+
 				err := category.Save(dbmap)
 				Expect(err).To(BeNil())
+
 			})
 		})
 	})
@@ -51,8 +54,22 @@ var _ = Describe("Categories", func() {
 
 				category2, err := Get(category.ID, dbmap)
 
+				category2.Products = nil
 				Expect(err).To(BeNil())
-				Expect(category2).To(Equal(&category))
+				Expect(category2).To(Equal(category))
+
+				product := products.Product{
+					CategoryID: category.ID,
+					Name:       "blahblahblaj",
+				}
+
+				err = product.Save(dbmap)
+				Expect(err).To(BeNil())
+
+				category2, err = Get(category.ID, dbmap)
+				Expect(err).To(BeNil())
+				Expect(category2.Products).To(ContainElement(product))
+
 			})
 		})
 	})
@@ -62,7 +79,6 @@ var _ = Describe("Categories", func() {
 			It("Should not return an error and update the register", func() {
 				err := category.Save(dbmap)
 				Expect(err).To(BeNil())
-
 				category.Name = "1111"
 				category.Update(dbmap)
 
@@ -91,7 +107,7 @@ var _ = Describe("Categories", func() {
 				cats, err := GetAll(dbmap)
 
 				Expect(err).To(BeNil())
-				Ω(cats).Should(ContainElement(category))
+				Ω(cats).Should(ContainElement(*category))
 				Ω(cats).Should(ContainElement(category2))
 				Ω(cats).Should(ContainElement(category3))
 

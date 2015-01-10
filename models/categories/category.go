@@ -13,7 +13,7 @@ import (
 type Category struct {
 	ID       int64              `db:"id" json:"id"`
 	Name     string             `db:"name" json:"name"`
-	Products []products.Product `db:"-" json:"products,omitempty"`
+	Products []products.Product `db:"-" json:"products"`
 }
 
 func (category *Category) Save(dbmap *gorp.DbMap) error {
@@ -28,6 +28,14 @@ func Get(id int64, dbmap *gorp.DbMap) (*Category, error) {
 		return nil, err
 	}
 
+	pdts, err := products.GetByCategoryID(category.ID, dbmap)
+	if err != nil {
+		if err.Error() != "sql: no rows in result set" {
+			return nil, err
+		}
+	}
+
+	category.Products = pdts
 	return &category, nil
 }
 
@@ -47,6 +55,15 @@ func GetAll(dbmap *gorp.DbMap) ([]Category, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, catego := range categories {
+		pdts, err := products.GetByCategoryID(catego.ID, dbmap)
+		if err != nil {
+			if err.Error() != "sql: no rows in result set" {
+				return nil, err
+			}
+		}
+		catego.Products = pdts
+	}
 	return categories, nil
 }
 
@@ -64,6 +81,7 @@ func InitDb() (*gorp.DbMap, error) {
 	// add a table, setting the table name to 'posts' and
 	// specifying that the Id property is an auto incrementing PK
 	dbmap.AddTableWithName(Category{}, "categories").SetKeys(true, "id")
+	dbmap.AddTableWithName(products.Product{}, "products").SetKeys(true, "id")
 
 	// create the table. in a production system you'd generally
 	// use a migration tool, or create the tables via scripts
