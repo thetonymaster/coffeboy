@@ -43,6 +43,19 @@
 			"ImportPath": "github.com/onsi/gomega",
 			"Comment": "v1.0-25-g85936b2",
 			"Rev": "85936b29809b7df066a8d839dd105e158e510264"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/go-metrics",
+			"Rev": "57bccd1ccd43f94bb17fdd8bf3007059b802f85e"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/gorelic",
+			"Comment": "v0.0.6-8-ga9bba5b",
+			"Rev": "a9bba5b9ab508a086f9a12b8c51fab68478e2128"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/newrelic_platform_go",
+			"Rev": "13d5af9721f4455a501db543c93827447089bab3"
 		}
 	]
 }
