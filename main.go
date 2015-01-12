@@ -13,6 +13,8 @@ import (
 	"github.com/crowdint/coffeboy/controllers/userscontroller"
 	"github.com/crowdint/coffeboy/models/categories"
 	"github.com/crowdint/coffeboy/models/products"
+	"github.com/crowdint/coffeboy/models/roles"
+	"github.com/crowdint/coffeboy/models/users"
 	"github.com/gorilla/mux"
 )
 
@@ -87,6 +89,8 @@ func InitDb() (*gorp.DbMap, error) {
 	// specifying that the Id property is an auto incrementing PK
 	dbmap.AddTableWithName(products.Product{}, "products").SetKeys(true, "id")
 	dbmap.AddTableWithName(categories.Category{}, "categories").SetKeys(true, "id")
+	dbmap.AddTableWithName(roles.Role{}, "roles").SetKeys(true, "id")
+	dbmap.AddTableWithName(users.User{}, "users").SetKeys(true, "id")
 
 	// create the table. in a production system you'd generally
 	// use a migration tool, or create the tables via scripts
