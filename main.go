@@ -8,6 +8,7 @@ import (
 
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/controllers/categoriescontroller"
+	"github.com/crowdint/coffeboy/controllers/currenttime"
 	"github.com/crowdint/coffeboy/controllers/productscontroller"
 	"github.com/crowdint/coffeboy/controllers/rolescontroller"
 	"github.com/crowdint/coffeboy/controllers/userscontroller"
@@ -70,6 +71,8 @@ func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r.HandleFunc("/role/{id}", f(userscontroller.Get)).Methods("GET")
 	r.HandleFunc("/role/{id}", f(userscontroller.Update)).Methods("PUT")
 	r.HandleFunc("/role/{id}", f(userscontroller.Delete)).Methods("DELETE")
+
+	r.HandleFunc("/current_time", currenttime.Get).Methods("GET")
 
 	return r
 }
