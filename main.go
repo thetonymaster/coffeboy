@@ -17,6 +17,7 @@ import (
 	"github.com/crowdint/coffeboy/models/roles"
 	"github.com/crowdint/coffeboy/models/users"
 	"github.com/gorilla/mux"
+	"github.com/yvasiyarov/gorelic"
 )
 
 var dbmap *gorp.DbMap
@@ -30,8 +31,13 @@ func init() {
 }
 
 func main() {
+	agent := gorelic.NewAgent()
+	agent.Verbose = true
+	agent.NewrelicLicense = "dc91b004a0e39086cb75ea6a4442cc1a8509d6f7"
+	agent.Run()
+
 	r := CreateHandler(CreateDbMapHandlerToHTTPHandler(dbmap))
-	http.Handle("/", r)
+	http.Handle("/", agent.WrapHTTPHandler(r))
 	log.Println("Starting server...")
 	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
