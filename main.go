@@ -79,6 +79,7 @@ func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r.HandleFunc("/role/{id}", f(userscontroller.Delete)).Methods("DELETE")
 
 	r.HandleFunc("/current_time", currenttime.Get).Methods("GET")
+	r.HandleFunc("/products", f(categoriescontroller.GetAll)).Methods("GET")
 
 	return r
 }
