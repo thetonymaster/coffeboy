@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 	"os"
 
+	"github.com/codegangsta/negroni"
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/controllers/categoriescontroller"
 	"github.com/crowdint/coffeboy/controllers/currenttime"
@@ -17,7 +17,7 @@ import (
 	"github.com/crowdint/coffeboy/models/roles"
 	"github.com/crowdint/coffeboy/models/users"
 	"github.com/gorilla/mux"
-	"github.com/yvasiyarov/gorelic"
+	"github.com/jingweno/negroni-gorelic"
 )
 
 var dbmap *gorp.DbMap
@@ -31,15 +31,11 @@ func init() {
 }
 
 func main() {
-	agent := gorelic.NewAgent()
-	agent.Verbose = true
-	agent.NewrelicLicense = "dc91b004a0e39086cb75ea6a4442cc1a8509d6f7"
-	agent.Run()
-
 	r := CreateHandler(CreateDbMapHandlerToHTTPHandler(dbmap))
-	http.Handle("/", agent.WrapHTTPHandler(r))
-	log.Println("Starting server...")
-	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	n := negroni.New()
+	n.Use(negronigorelic.New("dc91b004a0e39086cb75ea6a4442cc1a8509d6f7", "coffeboy", true))
+	n.UseHandler(r)
+	n.Run(":" + os.Getenv("PORT"))
 }
 
 type HandlerFunc func(w http.ResponseWriter, r *http.Request)
