@@ -64,6 +64,47 @@ var _ = Describe("Order", func() {
 		})
 	})
 
+	Describe("Update an order from the database", func() {
+		Context("With a test database", func() {
+			It("It should update an existing order and not return errors", func() {
+				order := Order{
+					UserID:  1,
+					Created: time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+				}
+				err := order.Save(dbmap)
+				Expect(err).To(BeNil())
+
+				newdate := time.Now().Format("06-01-02T15:04:05.999999999Z07:00")
+				order.Created = newdate
+
+				err = order.Update(dbmap)
+				Expect(err).To(BeNil())
+
+				order2, err := GetOrder(order.ID, dbmap)
+				Expect(err).To(BeNil())
+				Ω(order2.Created).Should(Equal(newdate))
+
+			})
+		})
+	})
+
+	Describe("Delete an order from the database", func() {
+		Context("With a test database", func() {
+			It("It should delete an existing order and return no errors", func() {
+				order1 := Order{
+					UserID:  2,
+					Created: time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+				}
+				err := order1.Save(dbmap)
+				Expect(err).To(BeNil())
+
+				err = order1.Delete(dbmap)
+				Expect(err).To(BeNil())
+
+			})
+		})
+	})
+
 	AfterSuite(func() {
 		dbmap.DropTables()
 		dbmap.Db.Close()

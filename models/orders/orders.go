@@ -29,6 +29,16 @@ func GetOrder(id int64, dbmap *gorp.DbMap) (*Order, error) {
 	return &order, nil
 }
 
+func (order *Order) Update(dbmap *gorp.DbMap) error {
+	_, err := dbmap.Update(order)
+	return err
+}
+
+func (order *Order) Delete(dbmap *gorp.DbMap) error {
+	_, err := dbmap.Delete(order)
+	return err
+}
+
 func InitDb() (*gorp.DbMap, error) {
 	// connect to db using standard Go database/sql API
 	// use whatever database/sql driver you wish
