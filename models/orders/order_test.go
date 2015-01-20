@@ -35,8 +35,19 @@ var _ = Describe("Order", func() {
 		Context("With a test databse", func() {
 			It("Save it and do not return errors", func() {
 				order := Order{
+					ID:      "R9998",
 					UserID:  1,
 					Created: time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+					LineItems: []OrderVariantData{
+						OrderVariantData{
+							ID:       "1",
+							Quantity: 10,
+						},
+						OrderVariantData{
+							ID:       "2",
+							Quantity: 20,
+						},
+					},
 				}
 
 				err := order.Save(dbmap)
@@ -49,8 +60,18 @@ var _ = Describe("Order", func() {
 		Context("Wirh a test database", func() {
 			It("It should save an order and then retrieve it", func() {
 				order := Order{
-					UserID:  1,
-					Created: time.Now().Format("2006-01-02T15:04:05.999999999Z07:00"),
+					ID:     "R9999",
+					UserID: 1,
+					LineItems: []OrderVariantData{
+						OrderVariantData{
+							ID:       "1",
+							Quantity: 10,
+						},
+						OrderVariantData{
+							ID:       "2",
+							Quantity: 20,
+						},
+					},
 				}
 				err := order.Save(dbmap)
 				Expect(err).To(BeNil())
@@ -59,6 +80,18 @@ var _ = Describe("Order", func() {
 				Expect(err).To(BeNil())
 
 				Ω(*order2).Should(Equal(order))
+				Ω(len(order2.LineItems)).Should(Equal(2))
+
+				jsonOrder, err := order.Marshal()
+				Expect(err).To(BeNil())
+
+				response := `{"id":"R9999","user_id":1,` +
+					`"created_at":""` +
+					`,"updated_at":"","completed_at":"","email":""` +
+					`,"total_quantity":"","line_items":` +
+					`[{"variant_id":"1","quantity":10},{"variant_id":"2","quantity":20}]}`
+
+				Ω(string(jsonOrder)).Should(Equal(response))
 
 			})
 		})

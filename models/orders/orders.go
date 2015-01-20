@@ -1,55 +1,83 @@
 package orders
 
 import (
-	"database/sql"
-	"os"
-
 	"github.com/coopernurse/gorp"
+	"github.com/crowdint/coffeboy/utils"
 	//For science
 	_ "github.com/lib/pq"
+
+	"encoding/json"
 )
 
 type Order struct {
-	ID      int64  `db:"id"`
-	UserID  int64  `db:"user_ID"`
-	Created string `db:"created"`
+	InternalID    int64              `db:"id" json:"-"`
+	ID            string             `db:"order_id" json:"id"`
+	UserID        int64              `db:"user_id" json:"user_id"`
+	Created       string             `db:"created" json:"created_at"`
+	Updated       string             `db:"updated" json:"updated_at"`
+	Completed     string             `db:"completed" json:"completed_at"`
+	Email         string             `db:"email" json:"email"`
+	Quantity      string             `db:"quantity" json:"total_quantity"`
+	LineItems     []OrderVariantData `db:"-" json:"line_items"`
+	LineItemsJson string             `db:"line_items_json" json:"-"`
+}
+
+type OrderVariantData struct {
+	ID       string `json:"variant_id"`
+	Quantity int    `json:"quantity"`
 }
 
 func (order *Order) Save(dbmap *gorp.DbMap) error {
+	lineItemsJson, err := json.Marshal(order.LineItems)
+	if err != nil {
+		return err
+	}
+
+	order.LineItemsJson = string(lineItemsJson)
+
 	return dbmap.Insert(order)
 }
 
-func GetOrder(id int64, dbmap *gorp.DbMap) (*Order, error) {
+func (order *Order) Update(dbmap *gorp.DbMap) error {
+	lineItemsJson, err := json.Marshal(order.LineItems)
+	if err != nil {
+		return err
+	}
+
+	order.LineItemsJson = string(lineItemsJson)
+
+	_, err = dbmap.Update(order)
+	return err
+}
+
+func (order *Order) Delete(dbmap *gorp.DbMap) error {
+	_, err := dbmap.Delete(order)
+	return err
+}
+
+func (order *Order) Marshal() ([]byte, error) {
+	return json.Marshal(order)
+}
+
+func GetOrder(orderId string, dbmap *gorp.DbMap) (*Order, error) {
 	order := Order{}
-	err := dbmap.SelectOne(&order, "SELECT * FROM orders WHERE id = $1", id)
+	err := dbmap.SelectOne(&order, "SELECT * FROM orders WHERE order_id = $1", orderId)
 	if err != nil {
 		return nil, err
 	}
+
+	var lineItems []OrderVariantData
+
+	err = json.Unmarshal([]byte(order.LineItemsJson), &lineItems)
+	if err != nil {
+		return nil, err
+	}
+
+	order.LineItems = lineItems
 
 	return &order, nil
 }
 
 func InitDb() (*gorp.DbMap, error) {
-	// connect to db using standard Go database/sql API
-	// use whatever database/sql driver you wish
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
-	if err != nil {
-		return nil, err
-	}
-
-	// construct a gorp DbMap
-	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
-
-	// add a table, setting the table name to 'posts' and
-	// specifying that the Id property is an auto incrementing PK
-	dbmap.AddTableWithName(Order{}, "orders").SetKeys(true, "id")
-
-	// create the table. in a production system you'd generally
-	// use a migration tool, or create the tables via scripts
-	err = dbmap.CreateTablesIfNotExists()
-	if err != nil {
-		return nil, err
-	}
-
-	return dbmap, nil
+	return utils.CreateTableWithID("orders", Order{})
 }
