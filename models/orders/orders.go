@@ -10,8 +10,7 @@ import (
 )
 
 type Order struct {
-	InternalID    int64              `db:"id" json:"-"`
-	ID            string             `db:"order_id" json:"id"`
+	ID            string             `db:"id" json:"id"`
 	UserID        int64              `db:"user_id" json:"user_id"`
 	Created       string             `db:"created" json:"created_at"`
 	Updated       string             `db:"updated" json:"updated_at"`
@@ -61,7 +60,7 @@ func (order *Order) Marshal() ([]byte, error) {
 
 func GetOrder(orderId string, dbmap *gorp.DbMap) (*Order, error) {
 	order := Order{}
-	err := dbmap.SelectOne(&order, "SELECT * FROM orders WHERE order_id = $1", orderId)
+	err := dbmap.SelectOne(&order, "SELECT * FROM orders WHERE id = $1", orderId)
 	if err != nil {
 		return nil, err
 	}
@@ -79,5 +78,5 @@ func GetOrder(orderId string, dbmap *gorp.DbMap) (*Order, error) {
 }
 
 func InitDb() (*gorp.DbMap, error) {
-	return utils.CreateTableWithID("orders", Order{})
+	return utils.CreateTableWithID("orders", Order{}, false)
 }

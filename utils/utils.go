@@ -29,7 +29,7 @@ func UploadImages(fileBytes []byte, identifier, folder string) {
 	go UploadAndResizeImage(400, 300, fileBytes, folder+"/"+identifier+"_small.jpg")
 }
 
-func CreateTableWithID(tableName string, entity interface{}) (*gorp.DbMap, error) {
+func CreateTableWithID(tableName string, entity interface{}, incrementable bool) (*gorp.DbMap, error) {
 	// connect to db using standard Go database/sql API
 	// use whatever database/sql driver you wish
 	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
@@ -42,7 +42,7 @@ func CreateTableWithID(tableName string, entity interface{}) (*gorp.DbMap, error
 
 	// add a table, setting the table name to 'posts' and
 	// specifying that the Id property is an auto incrementing PK
-	dbmap.AddTableWithName(entity, tableName).SetKeys(true, "id")
+	dbmap.AddTableWithName(entity, tableName).SetKeys(incrementable, "id")
 
 	// create the table. in a production system you'd generally
 	// use a migration tool, or create the tables via scripts

@@ -9,10 +9,12 @@ import (
 	"github.com/coopernurse/gorp"
 	"github.com/crowdint/coffeboy/controllers/categoriescontroller"
 	"github.com/crowdint/coffeboy/controllers/currenttime"
+	"github.com/crowdint/coffeboy/controllers/orderscontroller"
 	"github.com/crowdint/coffeboy/controllers/productscontroller"
 	"github.com/crowdint/coffeboy/controllers/rolescontroller"
 	"github.com/crowdint/coffeboy/controllers/userscontroller"
 	"github.com/crowdint/coffeboy/models/categories"
+	"github.com/crowdint/coffeboy/models/orders"
 	"github.com/crowdint/coffeboy/models/products"
 	"github.com/crowdint/coffeboy/models/roles"
 	"github.com/crowdint/coffeboy/models/users"
@@ -69,10 +71,15 @@ func CreateHandler(f DbMapHandlerToHTTPHandlerHOF) *mux.Router {
 	r.HandleFunc("/role/{id}", f(rolescontroller.Update)).Methods("PUT")
 	r.HandleFunc("/role/{id}", f(rolescontroller.Delete)).Methods("DELETE")
 
-	r.HandleFunc("/role", f(userscontroller.Save)).Methods("POST")
-	r.HandleFunc("/role/{id}", f(userscontroller.Get)).Methods("GET")
-	r.HandleFunc("/role/{id}", f(userscontroller.Update)).Methods("PUT")
-	r.HandleFunc("/role/{id}", f(userscontroller.Delete)).Methods("DELETE")
+	r.HandleFunc("/user", f(userscontroller.Save)).Methods("POST")
+	r.HandleFunc("/user/{id}", f(userscontroller.Get)).Methods("GET")
+	r.HandleFunc("/user/{id}", f(userscontroller.Update)).Methods("PUT")
+	r.HandleFunc("/user/{id}", f(userscontroller.Delete)).Methods("DELETE")
+
+	r.HandleFunc("/order", f(orderscontroller.Save)).Methods("POST")
+	r.HandleFunc("/order/{id}", f(orderscontroller.Get)).Methods("GET")
+	r.HandleFunc("/order/{id}", f(orderscontroller.Update)).Methods("PUT")
+	r.HandleFunc("/order/{id}", f(orderscontroller.Delete)).Methods("DELETE")
 
 	r.HandleFunc("/current_time", currenttime.Get).Methods("GET")
 	r.HandleFunc("/products", f(categoriescontroller.GetAll)).Methods("GET")
