@@ -104,6 +104,7 @@ func InitDb() (*gorp.DbMap, error) {
 	dbmap.AddTableWithName(categories.Category{}, "categories").SetKeys(true, "id")
 	dbmap.AddTableWithName(roles.Role{}, "roles").SetKeys(true, "id")
 	dbmap.AddTableWithName(users.User{}, "users").SetKeys(true, "id")
+	dbmap.AddTableWithName(orders.Order{}, "orders").SetKeys(false, "id")
 
 	// create the table. in a production system you'd generally
 	// use a migration tool, or create the tables via scripts
